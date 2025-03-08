@@ -1,24 +1,25 @@
 -- GGProject/Core/Init.lua
 -- Main initialization script
 
-local BASE_URL = "https://raw.githubusercontent.com/yourusername/GGProject/main"
+local BASE_URL = "https://raw.githubusercontent.com/LxckStxp/GGProject/main"
+local ScriptLoader = loadstring(game:HttpGet(BASE_URL .. "/Lib/ScriptLoader.lua"))()
 
 -- Load Core
-local Config = loadstring(game:HttpGet(BASE_URL .. "/Core/Config.lua"))()
-local Services = loadstring(game:HttpGet(BASE_URL .. "/Core/Services.lua"))()
+local Config = ScriptLoader:Load("/Core/Config.lua")
+local Services = ScriptLoader:Load("/Core/Services.lua")
 
 -- Load Modules
-local EntityTracker = loadstring(game:HttpGet(BASE_URL .. "/Modules/EntityTracker.lua"))()
-local ESP = loadstring(game:HttpGet(BASE_URL .. "/Modules/ESP.lua"))()
-local Aimbot = loadstring(game:HttpGet(BASE_URL .. "/Modules/Aimbot.lua"))()
-local CharacterManager = loadstring(game:HttpGet(BASE_URL .. "/Modules/CharacterManager.lua"))()
+local EntityTracker = ScriptLoader:Load("/Modules/EntityTracker.lua")
+local ESP = ScriptLoader:Load("/Modules/ESP.lua")
+local Aimbot = ScriptLoader:Load("/Modules/Aimbot.lua")
+local CharacterManager = ScriptLoader:Load("/Modules/CharacterManager.lua")
 
 -- Load UI
-local Censura = loadstring(game:HttpGet(BASE_URL .. "/UI/CensuraLoader.lua"))()
-local Interface = loadstring(game:HttpGet(BASE_URL .. "/UI/Interface.lua"))()
+local Censura = ScriptLoader:Load("/UI/CensuraLoader.lua")
+local Interface = ScriptLoader:Load("/UI/Interface.lua")
 
 -- Load Utilities
-local Utilities = loadstring(game:HttpGet(BASE_URL .. "/Lib/Utilities.lua"))()
+local Utilities = ScriptLoader:Load("/Lib/Utilities.lua")
 
 -- Framework Object
 local GGProject = {
