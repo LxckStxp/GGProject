@@ -1,9 +1,9 @@
 -- GGProject/Modules/EntityTracker.lua
 -- Robust entity tracking without relying on GetPlayers
 
-local BASE_URL = "https://raw.githubusercontent.com/yourusername/GGProject/main"
-local Config = loadstring(game:HttpGet(BASE_URL .. "/Core/Config.lua"))()
-local Services = loadstring(game:HttpGet(BASE_URL .. "/Core/Services.lua"))()
+local ScriptLoader = loadstring(game:HttpGet("https://raw.githubusercontent.com/LxckStxp/GGProject/main/Lib/ScriptLoader.lua"))()
+local Config = ScriptLoader:Load("/Core/Config.lua")
+local Services = ScriptLoader:Load("/Core/Services.lua")
 
 local EntityTracker = {
     Players = {},
