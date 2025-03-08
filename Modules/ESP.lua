@@ -1,16 +1,19 @@
 -- GGProject/Modules/ESP.lua
 -- ESP functionality
 
-local ESP = {}
-local Config = require(script.Parent.Parent.Core.Config)
-local Services = require(script.Parent.Parent.Core.Services)
+local ScriptLoader = loadstring(game:HttpGet("https://raw.githubusercontent.com/LxckStxp/GGProject/main/Lib/ScriptLoader.lua"))()
+local Config = ScriptLoader:Load("/Core/Config.lua")
+local Services = ScriptLoader:Load("/Core/Services.lua")
+local EntityTracker = ScriptLoader:Load("/Modules/EntityTracker.lua")
 
-ESP.Visuals = Instance.new("Folder", Services.Workspace)
-ESP.Visuals.Name = "ESPVisuals"
-ESP.Elements = {}
+local ESP = {
+    Visuals = Instance.new("Folder"),
+    Elements = {}
+}
 
 function ESP:Init()
-    -- Initial setup
+    self.Visuals.Name = "ESPVisuals"
+    self.Visuals.Parent = Services.Workspace
 end
 
 function ESP:CreateESP(target, isPlayer)
@@ -57,9 +60,7 @@ function ESP:Update()
         return
     end
     
-    local tracker = require(script.Parent.EntityTracker)
-    
-    for _, entity in pairs(tracker.Players) do
+    for _, entity in pairs(EntityTracker.Players) do
         local humanoid = entity:FindFirstChild("Humanoid")
         if humanoid then
             local esp = self.Elements[entity] or self:CreateESP(entity, true)
@@ -68,7 +69,7 @@ function ESP:Update()
         end
     end
     
-    for _, entity in pairs(tracker.NPCs) do
+    for _, entity in pairs(EntityTracker.NPCs) do
         local humanoid = entity:FindFirstChild("Humanoid")
         if humanoid then
             local esp = self.Elements[entity] or self:CreateESP(entity, false)
