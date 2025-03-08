@@ -1,13 +1,15 @@
 -- GGProject/Modules/EntityTracker.lua
 -- Robust entity tracking without relying on GetPlayers
 
-local EntityTracker = {}
-local Config = require(script.Parent.Parent.Core.Config)
-local Services = require(script.Parent.Parent.Core.Services)
+local BASE_URL = "https://raw.githubusercontent.com/yourusername/GGProject/main"
+local Config = loadstring(game:HttpGet(BASE_URL .. "/Core/Config.lua"))()
+local Services = loadstring(game:HttpGet(BASE_URL .. "/Core/Services.lua"))()
 
-EntityTracker.Players = {}
-EntityTracker.NPCs = {}
-EntityTracker.LocalPlayer = nil
+local EntityTracker = {
+    Players = {},
+    NPCs = {},
+    LocalPlayer = nil
+}
 
 function EntityTracker:Start()
     -- Find local player through character detection
@@ -15,7 +17,7 @@ function EntityTracker:Start()
         for _, humanoid in pairs(Services.Workspace:GetDescendants()) do
             if humanoid:IsA("Humanoid") and humanoid.Parent then
                 local root = humanoid.Parent:FindFirstChild("HumanoidRootPart")
-                if root and root:FindFirstChild("LocalPlayer") then -- Custom check for local player
+                if root and root:FindFirstChild("LocalPlayer") then -- Custom check
                     self.LocalPlayer = humanoid.Parent
                     break
                 end
@@ -39,7 +41,6 @@ function EntityTracker:Update()
             local humanoid = obj:FindFirstChild("Humanoid")
             local root = obj:FindFirstChild("HumanoidRootPart")
             if humanoid and root then
-                -- Determine if it's a player or NPC
                 local isPlayer = false
                 if Services.Players:GetPlayerFromCharacter(obj) then
                     isPlayer = true
