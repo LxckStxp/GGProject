@@ -1,25 +1,37 @@
 -- GGProject/Core/Init.lua
 -- Main initialization script
 
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local GGProject = {}
+local BASE_URL = "https://raw.githubusercontent.com/yourusername/GGProject/main"
 
 -- Load Core
-GGProject.Config = require(script.Parent.Config)
-GGProject.Services = require(script.Parent.Services)
+local Config = loadstring(game:HttpGet(BASE_URL .. "/Core/Config.lua"))()
+local Services = loadstring(game:HttpGet(BASE_URL .. "/Core/Services.lua"))()
 
 -- Load Modules
-GGProject.EntityTracker = require(script.Parent.Parent.Modules.EntityTracker)
-GGProject.ESP = require(script.Parent.Parent.Modules.ESP)
-GGProject.Aimbot = require(script.Parent.Parent.Modules.Aimbot)
-GGProject.CharacterManager = require(script.Parent.Parent.Modules.CharacterManager)
+local EntityTracker = loadstring(game:HttpGet(BASE_URL .. "/Modules/EntityTracker.lua"))()
+local ESP = loadstring(game:HttpGet(BASE_URL .. "/Modules/ESP.lua"))()
+local Aimbot = loadstring(game:HttpGet(BASE_URL .. "/Modules/Aimbot.lua"))()
+local CharacterManager = loadstring(game:HttpGet(BASE_URL .. "/Modules/CharacterManager.lua"))()
 
 -- Load UI
-GGProject.Censura = require(script.Parent.Parent.UI.CensuraLoader)
-GGProject.Interface = require(script.Parent.Parent.UI.Interface)
+local Censura = loadstring(game:HttpGet(BASE_URL .. "/UI/CensuraLoader.lua"))()
+local Interface = loadstring(game:HttpGet(BASE_URL .. "/UI/Interface.lua"))()
 
 -- Load Utilities
-GGProject.Utilities = require(script.Parent.Parent.Lib.Utilities)
+local Utilities = loadstring(game:HttpGet(BASE_URL .. "/Lib/Utilities.lua"))()
+
+-- Framework Object
+local GGProject = {
+    Config = Config,
+    Services = Services,
+    EntityTracker = EntityTracker,
+    ESP = ESP,
+    Aimbot = Aimbot,
+    CharacterManager = CharacterManager,
+    Censura = Censura,
+    Interface = Interface,
+    Utilities = Utilities
+}
 
 -- Initialize
 function GGProject:Init()
