@@ -1,62 +1,59 @@
 -- GGProject/Modules/Aimbot.lua
 -- Aimbot functionality
 
-local ScriptLoader = loadstring(game:HttpGet("https://raw.githubusercontent.com/LxckStxp/GGProject/main/Lib/ScriptLoader.lua"))()
-local Config = ScriptLoader:Load("/Core/Config.lua")
-local Services = ScriptLoader:Load("/Core/Services.lua")
-local EntityTracker = ScriptLoader:Load("/Modules/EntityTracker.lua")
+return function(Config, Services, EntityTracker)
+    local Aimbot = {}
 
-local Aimbot = {}
+    function Aimbot:Init()
+        -- Initial setup
+    end
 
-function Aimbot:Init()
-    -- Initial setup
-end
-
-function Aimbot:GetNearestTarget()
-    local camera = Services.Workspace.CurrentCamera
-    local mousePos = Services.UserInputService:GetMouseLocation()
-    local nearest, nearestDist = nil, Config.Aimbot.FOV
-    
-    local function checkTarget(target)
-        local root = target:FindFirstChild("HumanoidRootPart")
-        local humanoid = target:FindFirstChild("Humanoid")
-        if root and humanoid and humanoid.Health > 0 then
-            local screenPos, onScreen = camera:WorldToViewportPoint(root.Position)
-            if onScreen then
-                local dist = (Vector2.new(screenPos.X, screenPos.Y) - mousePos).Magnitude
-                if dist < nearestDist then
-                    nearest = target
-                    nearestDist = dist
+    function Aimbot:GetNearestTarget()
+        local camera = Services.Workspace.CurrentCamera
+        local mousePos = Services.UserInputService:GetMouseLocation()
+        local nearest, nearestDist = nil, Config.Aimbot.FOV
+        
+        local function checkTarget(target)
+            local root = target:FindFirstChild("HumanoidRootPart")
+            local humanoid = target:FindFirstChild("Humanoid")
+            if root and humanoid and humanoid.Health > 0 then
+                local screenPos, onScreen = camera:WorldToViewportPoint(root.Position)
+                if onScreen then
+                    local dist = (Vector2.new(screenPos.X, screenPos.Y) - mousePos).Magnitude
+                    if dist < nearestDist then
+                        nearest = target
+                        nearestDist = dist
+                    end
                 end
             end
         end
+        
+        if Config.Aimbot.TargetMode == "Players" or Config.Aimbot.TargetMode == "Both" then
+            for _, entity in pairs(EntityTracker.Players) do
+                checkTarget(entity)
+            end
+        end
+        
+        if Config.Aimbot.TargetMode == "NPCs" or Config.Aimbot.TargetMode == "Both" then
+            for _, entity in pairs(EntityTracker.NPCs) do
+                checkTarget(entity)
+            end
+        end
+        
+        return nearest
     end
-    
-    if Config.Aimbot.TargetMode == "Players" or Config.Aimbot.TargetMode == "Both" then
-        for _, entity in pairs(EntityTracker.Players) do
-            checkTarget(entity)
+
+    function Aimbot:Update()
+        if not Config.Aimbot.Enabled or not EntityTracker.LocalPlayer then return end
+        
+        local target = self:GetNearestTarget()
+        if target then
+            local camera = Services.Workspace.CurrentCamera
+            local targetPos = target:FindFirstChild("HumanoidRootPart").Position
+            local newCFrame = CFrame.new(camera.CFrame.Position, targetPos)
+            camera.CFrame = camera.CFrame:Lerp(newCFrame, Config.Aimbot.Smoothing)
         end
     end
-    
-    if Config.Aimbot.TargetMode == "NPCs" or Config.Aimbot.TargetMode == "Both" then
-        for _, entity in pairs(EntityTracker.NPCs) do
-            checkTarget(entity)
-        end
-    end
-    
-    return nearest
-end
 
-function Aimbot:Update()
-    if not Config.Aimbot.Enabled or not EntityTracker.LocalPlayer then return end
-    
-    local target = self:GetNearestTarget()
-    if target then
-        local camera = Services.Workspace.CurrentCamera
-        local targetPos = target:FindFirstChild("HumanoidRootPart").Position
-        local newCFrame = CFrame.new(camera.CFrame.Position, targetPos)
-        camera.CFrame = camera.CFrame:Lerp(newCFrame, Config.Aimbot.Smoothing)
-    end
+    return Aimbot
 end
-
-return Aimbot
