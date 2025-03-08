@@ -1,9 +1,12 @@
 -- GGProject/Modules/Aimbot.lua
 -- Aimbot functionality
 
+local ScriptLoader = loadstring(game:HttpGet("https://raw.githubusercontent.com/LxckStxp/GGProject/main/Lib/ScriptLoader.lua"))()
+local Config = ScriptLoader:Load("/Core/Config.lua")
+local Services = ScriptLoader:Load("/Core/Services.lua")
+local EntityTracker = ScriptLoader:Load("/Modules/EntityTracker.lua")
+
 local Aimbot = {}
-local Config = require(script.Parent.Parent.Core.Config)
-local Services = require(script.Parent.Parent.Core.Services)
 
 function Aimbot:Init()
     -- Initial setup
@@ -12,7 +15,6 @@ end
 function Aimbot:GetNearestTarget()
     local camera = Services.Workspace.CurrentCamera
     local mousePos = Services.UserInputService:GetMouseLocation()
-    local tracker = require(script.Parent.EntityTracker)
     local nearest, nearestDist = nil, Config.Aimbot.FOV
     
     local function checkTarget(target)
@@ -31,13 +33,13 @@ function Aimbot:GetNearestTarget()
     end
     
     if Config.Aimbot.TargetMode == "Players" or Config.Aimbot.TargetMode == "Both" then
-        for _, entity in pairs(tracker.Players) do
+        for _, entity in pairs(EntityTracker.Players) do
             checkTarget(entity)
         end
     end
     
     if Config.Aimbot.TargetMode == "NPCs" or Config.Aimbot.TargetMode == "Both" then
-        for _, entity in pairs(tracker.NPCs) do
+        for _, entity in pairs(EntityTracker.NPCs) do
             checkTarget(entity)
         end
     end
@@ -46,7 +48,7 @@ function Aimbot:GetNearestTarget()
 end
 
 function Aimbot:Update()
-    if not Config.Aimbot.Enabled or not tracker.LocalPlayer then return end
+    if not Config.Aimbot.Enabled or not EntityTracker.LocalPlayer then return end
     
     local target = self:GetNearestTarget()
     if target then
